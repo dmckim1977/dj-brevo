@@ -1,0 +1,75 @@
+[project]
+name = "dj-brevo"
+dynamic = ["version"]
+description = "Django + Brevo for transactional emails and customer journey automations."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "David McKim", email = "davidmckim@gmail.com" }
+]
+requires-python = ">=3.10"
+keywords = ["django", "brevo", "sendinblue", "email", "transactional", "marketing"]
+classifiers = [
+      "Development Status :: 3 - Alpha",
+      "Environment :: Web Environment",
+      "Framework :: Django",
+      "Framework :: Django :: 5.0",
+      "Framework :: Django :: 5.1",
+      "Intended Audience :: Developers",
+      "License :: OSI Approved :: MIT License",
+      "Operating System :: OS Independent",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3.13",
+  ]
+
+dependencies = [
+    "django>=5.0", 
+    "httpx>=0.27",
+]
+
+[project.urls] 
+Homepage = "https://github.com/dmckim1977/dj-brevo" 
+Repository = "https://github.com/dmckim1977/dj-brevo"
+Issues = "https://github.com/dmckim1977/dj-brevo/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/dj_brevo/__init__.py"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.5",
+    "pytest-httpx>=0.35",
+    "ruff>=0.9",
+    "mypy>=1.10",
+    "django-stubs>=5.0",
+    "pre-commit>=3.7",
+    "tox>=4.15",
+    "tox-uv>=1.9",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "DJ"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = ["src", "."]
+
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+python_version = "3.12"
+strict = true
+
+[tool.django-stubs]
+django_settings_module = "tests.settings"
+
