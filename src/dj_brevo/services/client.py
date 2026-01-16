@@ -30,6 +30,7 @@ class BrevoClient:
             )
         self.base_url = brevo_settings.API_BASE_URL
         self.timeout = brevo_settings.TIMEOUT
+        self.sandbox = brevo_settings.SANDBOX
 
     def _get_headers(self) -> dict[str, str]:
         """Returns headers required for Brevo API requests."""
@@ -38,6 +39,19 @@ class BrevoClient:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+
+    def _apply_sandbox(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Add sandbox header to payload if sandbox mode is enabled.
+
+        Args:
+            payload: The API request payload.
+
+        Returns:
+            Payload with sandbox header added if enabled.
+        """
+        if self.sandbox:
+            payload["headers"] = {"X-Sib-Sandbox": "drop"}
+        return payload
 
     def _handle_response(self, response: httpx.Response) -> dict[str, Any]:
         """Handle API response and raise appropriate exceptions.
@@ -165,7 +179,7 @@ class BrevoClient:
         if bcc:
             payload["bcc"] = bcc
 
-        return self._post("/smtp/email", payload)
+        return self._post("/smtp/email", self._apply_sandbox(payload))
 
     def send_template_email(
         self,
@@ -215,4 +229,4 @@ class BrevoClient:
         if bcc:
             payload["bcc"] = bcc
 
-        return self._post("/smtp/email", payload)
+        return self._post("/smtp/email", self._apply_sandbox(payload))

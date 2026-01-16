@@ -23,6 +23,7 @@ DEFAULTS: dict[str, Any] = {
     "DEFAULT_FROM_EMAIL": None,
     "TIMEOUT": 10,
     "API_BASE_URL": "https://api.brevo.com/v3",
+    "SANDBOX": False,
 }
 
 

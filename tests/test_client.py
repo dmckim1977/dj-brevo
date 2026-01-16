@@ -217,3 +217,81 @@ class TestSendTemplateEmail:
         assert payload["to"] == [{"email": "recipient@example.com"}]
         assert payload["templateId"] == 42
         assert payload["params"] == {"firstName": "David", "orderTotal": "$99"}
+
+
+class TestSandboxMode:
+    """Tests for sandbox mode functionality."""
+
+    def test_sandbox_mode_adds_header(
+        self,
+        httpx_mock: HTTPXMock,
+        brevo_success_response: dict,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Sandbox mode should add X-Sib-Sandbox header to payload."""
+        # Enable sandbox mode
+        monkeypatch.setattr(
+            "dj_brevo.services.client.brevo_settings",
+            type(
+                "FakeSettings",
+                (),
+                {
+                    "API_KEY": "test-key",
+                    "API_BASE_URL": "https://api.brevo.com/v3",
+                    "TIMEOUT": 10,
+                    "SANDBOX": True,
+                    "DEFAULT_FROM_EMAIL": "test@example.com",
+                },
+            )(),
+        )
+
+        httpx_mock.add_response(
+            url="https://api.brevo.com/v3/smtp/email",
+            json=brevo_success_response,
+        )
+
+        client = BrevoClient(api_key="test-key")
+        client.send_email(
+            to=[{"email": "recipient@example.com"}],
+            subject="Test",
+            html_content="<p>Test</p>",
+            sender={"email": "sender@example.com"},
+        )
+
+        request = httpx_mock.get_request()
+        assert request is not None
+
+        import json
+
+        payload = json.loads(request.content)
+
+        assert "headers" in payload
+        assert payload["headers"] == {"X-Sib-Sandbox": "drop"}
+
+    def test_sandbox_mode_disabled_no_header(
+        self,
+        httpx_mock: HTTPXMock,
+        brevo_client: BrevoClient,
+        brevo_success_response: dict,
+    ) -> None:
+        """When sandbox is disabled, no sandbox header should be added."""
+        httpx_mock.add_response(
+            url="https://api.brevo.com/v3/smtp/email",
+            json=brevo_success_response,
+        )
+
+        brevo_client.send_email(
+            to=[{"email": "recipient@example.com"}],
+            subject="Test",
+            html_content="<p>Test</p>",
+            sender={"email": "sender@example.com"},
+        )
+
+        request = httpx_mock.get_request()
+        assert request is not None
+
+        import json
+
+        payload = json.loads(request.content)
+
+        assert "headers" not in payload
