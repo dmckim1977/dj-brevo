@@ -24,6 +24,7 @@ DEFAULTS: dict[str, Any] = {
     "TIMEOUT": 10,
     "API_BASE_URL": "https://api.brevo.com/v3",
     "SANDBOX": False,
+    "AUTO_SYNC": True,
 }
 
 
