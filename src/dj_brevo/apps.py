@@ -10,10 +10,6 @@ class DJBrevoConfig(AppConfig):
     verbose_name = "Brevo Integration"
 
     def ready(self) -> None:
-        """Run when Django has fully loaded this app.
+        """Run when Django has fully loaded this app."""
 
-        TODO Validate settings (API Key exists, etc)
-        TODO Import signal handlers
-        """
-
-        pass
+        from dj_brevo.signals import handlers  # noqa: F401
