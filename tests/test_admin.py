@@ -138,9 +138,7 @@ class TestBrevoAttributeAdmin:
         with patch("dj_brevo.admin.BrevoClient") as MockClient:
             mock_client = MockClient.return_value
 
-            admin.sync_to_brevo(
-                mock_request, BrevoAttribute.objects.filter(pk=attr.pk)
-            )
+            admin.sync_to_brevo(mock_request, BrevoAttribute.objects.filter(pk=attr.pk))
 
             mock_client.create_attribute.assert_called_once()
 
@@ -164,9 +162,7 @@ class TestBrevoAttributeAdmin:
         with patch("dj_brevo.admin.BrevoClient") as MockClient:
             mock_client = MockClient.return_value
 
-            admin.sync_to_brevo(
-                mock_request, BrevoAttribute.objects.filter(pk=attr.pk)
-            )
+            admin.sync_to_brevo(mock_request, BrevoAttribute.objects.filter(pk=attr.pk))
 
             mock_client.create_attribute.assert_not_called()
 
@@ -203,9 +199,7 @@ class TestBrevoContactAdmin:
         self, admin_site: AdminSite, mock_request: MagicMock
     ) -> None:
         """Test pull_from_brevo updates contact from Brevo."""
-        contact = BrevoContact.objects.create(
-            email="test@example.com", attributes={}
-        )
+        contact = BrevoContact.objects.create(email="test@example.com", attributes={})
         admin = BrevoContactAdmin(BrevoContact, admin_site)
 
         with patch("dj_brevo.admin.BrevoClient") as MockClient:

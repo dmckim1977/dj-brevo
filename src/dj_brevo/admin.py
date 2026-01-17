@@ -33,7 +33,7 @@ class BrevoListAdmin(admin.ModelAdmin):  # type: ignore[type-arg]
     @admin.action(description="Sync selected lists to Brevo")
     def sync_to_brevo(
         self,
-        request: HttpRequest, 
+        request: HttpRequest,
         queryset: QuerySet[BrevoList],
     ) -> None:
         client = BrevoClient()
@@ -49,7 +49,7 @@ class BrevoListAdmin(admin.ModelAdmin):  # type: ignore[type-arg]
 
             if obj.brevo_id is None:
                 response = client.create_list(
-                    name=obj.name, 
+                    name=obj.name,
                     folder_id=obj.folder_id,
                 )
                 obj.brevo_id = response["id"]
@@ -94,7 +94,6 @@ class BrevoListAdmin(admin.ModelAdmin):  # type: ignore[type-arg]
         self.message_user(
             request, f"Pulled from Brevo: {created} created, {updated} updated."
         )
-
 
 
 class BrevoAttributeOptionInline(admin.TabularInline):  # type: ignore[type-arg]
@@ -250,10 +249,12 @@ class BrevoContactAdmin(admin.ModelAdmin):  # type: ignore[type-arg]
         synced = 0
         for obj in queryset:
             list_ids: list[int] = [
-                  bid for bid in obj.lists.filter(brevo_id__isnull=False)
-                  .values_list("brevo_id", flat=True)
-                  if bid is not None
-              ]
+                bid
+                for bid in obj.lists.filter(brevo_id__isnull=False).values_list(
+                    "brevo_id", flat=True
+                )
+                if bid is not None
+            ]
 
             if obj.brevo_id is None:
                 response = client.create_contact(
@@ -309,5 +310,3 @@ class BrevoContactAdmin(admin.ModelAdmin):  # type: ignore[type-arg]
         if skipped:
             msg += f" Skipped {skipped} (not found in Brevo)."
         self.message_user(request, msg)
-
-
