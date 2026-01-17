@@ -20,4 +20,5 @@ USE_TZ = True
 DJ_BREVO = {
     "API_KEY": "test-api-key",
     "DEFAULT_FROM_EMAIL": "test@example.com",
+    "AUTO_SYNC": False,
 }
